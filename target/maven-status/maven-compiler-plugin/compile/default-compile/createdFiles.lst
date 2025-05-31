@@ -1,0 +1,10 @@
+org\jballs\ballerelo\ballerelo.class
+org\jballs\ballerelo\PlayerJoinListener.class
+org\jballs\ballerelo\ReloadCommand.class
+org\jballs\ballerelo\EloCommand.class
+org\jballs\ballerelo\CrystalPlaceListener.class
+org\jballs\ballerelo\EloManager.class
+org\jballs\ballerelo\ScoreboardManager.class
+org\jballs\ballerelo\CrystalTracker.class
+org\jballs\ballerelo\KillListener.class
+org\jballs\ballerelo\ResetEloCommand.class

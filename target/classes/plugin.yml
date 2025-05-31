@@ -1,0 +1,14 @@
+name: ballerelo
+version: 1.0
+main: org.jballs.ballerelo.ballerelo
+commands:
+  elo:
+    description: Shows your current ELO and rank
+    usage: /elo
+  reloadelo:
+    description: Reloads the ballerelo plugin configuration
+    usage: /reloadelo
+  resetelo:
+    description: Reset all players' ELO scores
+    usage: /resetelo
+    permission: ballerelo.admin

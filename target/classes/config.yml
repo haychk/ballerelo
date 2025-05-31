@@ -1,0 +1,19 @@
+# How much ELO a player gains when they kill another
+elo-on-kill: 10
+
+# How much ELO a player loses when they die
+elo-on-death: 5
+
+
+# Ranks based on ELO thresholds
+ranks:
+  Silver I: 0
+  Silver II: 200
+  Silver III: 400
+  Gold Nova I: 600
+  Gold Nova II: 800
+  Master Guardian I: 1000
+  Master Guardian II: 1200
+  Legendary Eagle: 1500
+  Supreme Master: 1800
+  Global Elite: 2000
