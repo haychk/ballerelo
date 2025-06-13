@@ -4,13 +4,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class ballerelo extends JavaPlugin {
 
-    private static ballerelo instance;
     private EloManager eloManager;
-    private ScoreboardManager scoreboardManager;  // <-- Add this
+    private ScoreboardManager scoreboardManager;
 
     @Override
     public void onEnable() {
-        instance = this;
         saveDefaultConfig();
 
         eloManager = new EloManager(this);
@@ -18,17 +16,10 @@ public class ballerelo extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new KillListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
-        getServer().getPluginManager().registerEvents(new CrystalPlaceListener(this), this);
 
         getCommand("elo").setExecutor(new EloCommand(this));
         getCommand("reloadelo").setExecutor(new ReloadCommand(this));
         getCommand("resetelo").setExecutor(new ResetEloCommand(this));
-    }
-
-
-
-    public static ballerelo getInstance() {
-        return instance;
     }
 
     public EloManager getEloManager() {
@@ -36,20 +27,14 @@ public class ballerelo extends JavaPlugin {
     }
 
     public ScoreboardManager getScoreboardManager() {
-        return scoreboardManager;  // <-- Add this getter
+        return scoreboardManager;
     }
     public void reloadPluginConfig() {
         reloadConfig();
-        saveConfig();  // ensures defaults are saved if missing
+        saveConfig();
 
         if (eloManager != null) {
-            eloManager.loadRanks();  // reload ranks from new config
+            eloManager.loadRanks();
         }
     }
-    private final CrystalTracker crystalTracker = new CrystalTracker();
-
-    public CrystalTracker getCrystalTracker() {
-        return crystalTracker;
-    }
-
 }

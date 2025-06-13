@@ -1,12 +1,18 @@
 package org.jballs.ballerelo;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.EnderCrystal;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.metadata.MetadataValue;
+
+import java.util.List;
+import java.util.UUID;
 
 public class KillListener implements Listener {
 
@@ -19,22 +25,36 @@ public class KillListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player victim = event.getEntity();
-        Player killer = victim.getKiller();
+        Entity killer = victim.getKiller();
+        System.out.println("event fired");
 
-        // if there is no direct killer, check for EnderCrystal damage (lowk buggy af rn. doesn't even work)
         if (killer == null) {
+            System.out.println("event fired 2");
             EntityDamageEvent lastDamage = victim.getLastDamageCause();
             if (lastDamage instanceof EntityDamageByEntityEvent) {
+                System.out.println("event fired 3");
                 EntityDamageByEntityEvent entityDamage = (EntityDamageByEntityEvent) lastDamage;
                 if (entityDamage.getDamager() instanceof EnderCrystal) {
+                    System.out.println("event fired 4");
                     EnderCrystal crystal = (EnderCrystal) entityDamage.getDamager();
-                    killer = plugin.getCrystalTracker().getPlacer(crystal);
+                    if (crystal.hasMetadata("dmp.enderCrystalPlacer")) {
+                        final List<MetadataValue> metadataValues = crystal.getMetadata("dmp.enderCrystalPlacer");
+                        if (!metadataValues.isEmpty()) {
+                            final Player finalKiller = Bukkit.getPlayer(
+                                    UUID.fromString(metadataValues.get(0).asString())
+                            );
+                            doElo(getPlayer(finalKiller.getUniqueId()), victim);
+                        }
+                    }
                 }
             }
         }
 
         if (killer == null || killer.equals(victim)) return;
+        doElo(getPlayer(killer.getUniqueId()), victim);
+    }
 
+    public void doElo(Player killer, Player victim) {
         EloManager eloManager = plugin.getEloManager();
         int eloGain = plugin.getConfig().getInt("elo-on-kill", 10);
         int eloLoss = plugin.getConfig().getInt("elo-on-death", 5);
@@ -49,5 +69,9 @@ public class KillListener implements Listener {
             plugin.getScoreboardManager().updatePlayerScoreboard(killer);
             plugin.getScoreboardManager().updatePlayerScoreboard(victim);
         }
+    }
+
+    public Player getPlayer(UUID playerUUID) {
+        return plugin.getServer().getPlayer(playerUUID);
     }
 }
