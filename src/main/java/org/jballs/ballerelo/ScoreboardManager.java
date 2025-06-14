@@ -12,14 +12,30 @@ public class ScoreboardManager {
 
     private final ballerelo plugin;
     private final Map<UUID, Scoreboard> playerScoreboards = new HashMap<>();
+    private final Set<UUID> disabledScoreboards = new HashSet<>();
+
 
     public ScoreboardManager(ballerelo plugin) {
         this.plugin = plugin;
     }
-
+    public void toggleScoreboard(Player player) {
+        UUID uuid = player.getUniqueId();
+        if (disabledScoreboards.contains(uuid)) {
+            disabledScoreboards.remove(uuid);
+            player.sendMessage(ChatColor.GOLD + "Elo scoreboard has been enabled.");
+            updatePlayerScoreboard(player);
+        } else {
+            disabledScoreboards.add(uuid);
+            clearScoreboard(player);
+            player.sendMessage(ChatColor.GOLD + "Elo scoreboard has been disabled.");
+        }
+    }
     public void updatePlayerScoreboard(Player player) {
         EloManager eloManager = plugin.getEloManager();
-
+        if (disabledScoreboards.contains(player.getUniqueId())) {
+            clearScoreboard(player);
+            return;
+        }
         Scoreboard scoreboard = playerScoreboards.get(player.getUniqueId());
         if (scoreboard == null) {
             scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();

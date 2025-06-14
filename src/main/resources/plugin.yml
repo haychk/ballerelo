@@ -12,3 +12,5 @@ commands:
     description: Reset all players' ELO scores
     usage: /resetelo
     permission: ballerelo.admin
+  togglescoreboard:
+    description: Toggles the Elo scoreboard visibility
