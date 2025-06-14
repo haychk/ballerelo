@@ -20,7 +20,7 @@ public class ballerelo extends JavaPlugin {
         getCommand("elo").setExecutor(new EloCommand(this));
         getCommand("reloadelo").setExecutor(new ReloadCommand(this));
         getCommand("resetelo").setExecutor(new ResetEloCommand(this));
-        this.getCommand("toggle").setExecutor(new ToggleCommand(this));
+        this.getCommand("togglescoreboard").setExecutor(new ToggleCommand(this));
 
 
     }

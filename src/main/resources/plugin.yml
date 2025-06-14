@@ -13,4 +13,5 @@ commands:
     usage: /resetelo
     permission: ballerelo.admin
   togglescoreboard:
+    usage: /togglescoreboard
     description: Toggles the Elo scoreboard visibility
