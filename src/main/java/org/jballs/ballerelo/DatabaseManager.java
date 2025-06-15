@@ -66,7 +66,6 @@ public class DatabaseManager {
 
     public void addElo(String uuid, int amount) {
         String SQL = "UPDATE player_data SET elo = elo + ? WHERE uuid = ?";
-        plugin.getLogger().info("Adding " + amount + " ELO to " + uuid);
         try (PreparedStatement ps = connection.prepareStatement(SQL)) {
             ps.setInt(1, amount);
             ps.setString(2, uuid);
