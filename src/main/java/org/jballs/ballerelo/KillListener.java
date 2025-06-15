@@ -26,16 +26,12 @@ public class KillListener implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player victim = event.getEntity();
         Entity killer = victim.getKiller();
-        System.out.println("event fired");
 
         if (killer == null) {
-            System.out.println("event fired 2");
             EntityDamageEvent lastDamage = victim.getLastDamageCause();
             if (lastDamage instanceof EntityDamageByEntityEvent) {
-                System.out.println("event fired 3");
                 EntityDamageByEntityEvent entityDamage = (EntityDamageByEntityEvent) lastDamage;
                 if (entityDamage.getDamager() instanceof EnderCrystal) {
-                    System.out.println("event fired 4");
                     EnderCrystal crystal = (EnderCrystal) entityDamage.getDamager();
                     if (crystal.hasMetadata("dmp.enderCrystalPlacer")) {
                         final List<MetadataValue> metadataValues = crystal.getMetadata("dmp.enderCrystalPlacer");
@@ -43,6 +39,7 @@ public class KillListener implements Listener {
                             final Player finalKiller = Bukkit.getPlayer(
                                     UUID.fromString(metadataValues.get(0).asString())
                             );
+                            if (finalKiller == victim) return;
                             doElo(getPlayer(finalKiller.getUniqueId()), victim);
                         }
                     }
@@ -56,8 +53,19 @@ public class KillListener implements Listener {
 
     public void doElo(Player killer, Player victim) {
         EloManager eloManager = plugin.getEloManager();
+
+        if (eloManager.checkDelay(victim.getUniqueId().toString())) {
+            return;
+        }
+
+        eloManager.doDelay(victim.getUniqueId().toString());
+
         int eloGain = plugin.getConfig().getInt("elo-on-kill", 10);
         int eloLoss = plugin.getConfig().getInt("elo-on-death", 5);
+
+        if (eloManager.getElo(victim) < 0) {
+            eloGain = 0;
+        }
 
         eloManager.addElo(killer, eloGain);
         eloManager.addElo(victim, -eloLoss);

@@ -23,7 +23,7 @@ public class ResetEloCommand implements CommandExecutor {
         }
 
         // resets all ELO scores back to 0
-        plugin.getEloManager().resetAllElo();
+        plugin.databaseManager.resetElo();
 
         // updates the scoreboard for all online players
         for (Player player : Bukkit.getOnlinePlayers()) {

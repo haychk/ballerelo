@@ -2,17 +2,21 @@ package org.jballs.ballerelo;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EloManager {
 
     private final ballerelo plugin;
-    private final Map<UUID, Integer> eloMap = new HashMap<>();
+    private final BukkitScheduler scheduler;
+    public final Set<String> eloDelay = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private final TreeMap<Integer, String> rankMap = new TreeMap<>();
 
-    public EloManager(ballerelo plugin) {
+    public EloManager(ballerelo plugin, BukkitScheduler scheduler) {
         this.plugin = plugin;
+        this.scheduler = scheduler;
         loadRanks();
     }
 
@@ -27,26 +31,24 @@ public class EloManager {
     }
 
     public int getElo(Player player) {
-        return eloMap.getOrDefault(player.getUniqueId(), 0);
+        return plugin.databaseManager.getElo(player.getUniqueId().toString());
     }
 
     public void addElo(Player player, int amount) {
-        UUID uuid = player.getUniqueId();
-        int newElo = getElo(player) + amount;
-        eloMap.put(uuid, newElo);
+        plugin.databaseManager.addElo(player.getUniqueId().toString(), amount);
+    }
+
+    public void doDelay(String uuid) {
+        eloDelay.add(uuid);
+        scheduler.runTaskLater(plugin, () -> eloDelay.remove(uuid), 300);
+    }
+
+    public boolean checkDelay(String playerUUID) {
+        return eloDelay.contains(playerUUID);
     }
 
     public String getRank(int elo) {
         Map.Entry<Integer, String> entry = rankMap.floorEntry(elo);
         return entry != null ? entry.getValue() : "UnRank";
     }
-
-    // exposes an unmodifiable copy of the eloMap for safe external use
-    public Map<UUID, Integer> getEloMap() {
-        return Collections.unmodifiableMap(eloMap);
-    }
-    public void resetAllElo() {
-        eloMap.clear(); // assuming the elo data is stored in a Map<UUID, Integer> called eloMap
-    }
-
 }

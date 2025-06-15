@@ -63,15 +63,15 @@ public class ScoreboardManager {
         objective.getScore(" ").setScore(14);
         objective.getScore("" + ChatColor.AQUA + "Top 10 Elo Players").setScore(13);
 
-        List<Map.Entry<UUID, Integer>> topPlayers = eloManager.getEloMap().entrySet().stream()
+        List<Map.Entry<String, Integer>> topPlayers = plugin.databaseManager.getEloMap().entrySet().stream()
                 .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
                 .limit(10)
                 .collect(Collectors.toList());
 
         int scoreIndex = 12;
         for (int i = 0; i < topPlayers.size(); i++) {
-            Map.Entry<UUID, Integer> entry = topPlayers.get(i);
-            UUID uuid = entry.getKey();
+            Map.Entry<String, Integer> entry = topPlayers.get(i);
+            UUID uuid = UUID.fromString(entry.getKey());
             int elo = entry.getValue();
             String name = Bukkit.getOfflinePlayer(uuid).getName();
             if (name == null) name = "Unknown";

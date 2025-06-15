@@ -16,6 +16,7 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        plugin.databaseManager.registerPlayer(player.getUniqueId().toString());
         plugin.getScoreboardManager().updatePlayerScoreboard(player);
     }
 }
